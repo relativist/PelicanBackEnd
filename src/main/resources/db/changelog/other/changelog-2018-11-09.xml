@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+    <changeSet author="Sitnikov" id="2018-10-09-1">
+        <sql>
+            create table public.pelican_user
+            (
+            id serial not null
+            constraint pelican_user_pkey
+            primary key,
+            login text,
+            email text,
+            password text,
+            name text
+            );
+        </sql>
+        <sql>
+            alter table public.pelican_user
+            owner to rest;
+        </sql>
+
+        <sql>
+            create table public.pelican_category
+            (
+            id serial not null
+            constraint pelican_category_pkey
+            primary key,
+            user_id int,
+            category_parent_id int,
+            name text,
+            simple boolean,
+            score int,
+            disposable boolean,
+            disposable_capacity int,
+            disposable_done int,
+            deprecated boolean
+            );
+        </sql>
+
+        <sql>
+            alter table public.pelican_category
+            owner to rest;
+        </sql>
+
+
+        <sql>
+            create table public.pelican_event
+            (
+            id serial not null
+            constraint pelican_event_pkey
+            primary key,
+            user_id int,
+            category_id int,
+            score int,
+            date text
+            );
+        </sql>
+        <sql>
+            alter table public.pelican_event
+            owner to rest;
+        </sql>
+
+        <sql>
+            CREATE SEQUENCE hibernate_sequence START 1;
+        </sql>
+
+    </changeSet>
+</databaseChangeLog>

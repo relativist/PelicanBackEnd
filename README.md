@@ -1,6 +1,9 @@
 # PelicanBackEnd
 Java back-end  for Pelican Proj
 
-Used:
-spring-boot-starter-web
-CrudRepository
+Used technology:
+
+- spring-web
+- CrudRepository
+- liquibase
+- spring jpa

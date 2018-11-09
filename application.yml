@@ -1,8 +1,11 @@
 spring:
   datasource:
     platform: postgres
-    url: ${db-url:jdbc:postgresql://localhost:5432/auto3n}
-    username: ${db-user:***}
-    password: ${db-pass:***}
+    url: ${db-url:jdbc:postgresql://localhost:5432/rest}
+    username: ${db-user:rest}
+    password: ${db-pass:rest}
     driverClassName: org.postgresql.Driver
     auto-commit: false
+liquibase:
+  change-log: classpath:/db/changelog/liquibase-main.xml
+  enabled: true

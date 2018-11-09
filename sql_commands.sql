@@ -10,7 +10,7 @@ create table public.pelican_user
 );
 
 alter table public.pelican_user
-  owner to auto3n;
+  owner to rest;
 
 
 
@@ -31,7 +31,7 @@ create table public.pelican_category
 );
 
 alter table public.pelican_category
-  owner to auto3n;
+  owner to rest;
 
 
 
@@ -47,7 +47,7 @@ create table public.pelican_event
 );
 
 alter table public.pelican_event
-  owner to auto3n;
+  owner to rest;
 
 
 

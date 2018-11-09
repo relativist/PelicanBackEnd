@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+import ru.usque.pelican.entities.PelicanCategory;
 import ru.usque.pelican.entities.PelicanUser;
 import ru.usque.pelican.services.IPelicanUserService;
 
@@ -54,6 +55,14 @@ public class PelicanUserController {
     public ResponseEntity<Void> deleteArticle(@PathVariable("id") Integer id) {
         service.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("dump")
+    public ResponseEntity<List<PelicanCategory>> createAllCategories(@RequestBody List<PelicanUser> users) {
+        if (users != null && !users.isEmpty()) {
+            users.forEach(service::addUser);
+        }
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
 }

@@ -7,7 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+import ru.usque.pelican.entities.PelicanCategory;
 import ru.usque.pelican.entities.PelicanEvent;
+import ru.usque.pelican.entities.PelicanUser;
 import ru.usque.pelican.services.IPelicanEventService;
 
 import java.util.List;
@@ -54,6 +56,14 @@ public class PelicanEventController {
     public ResponseEntity<Void> deleteArticle(@PathVariable("id") Integer id) {
         service.deleteEvent(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("dump")
+    public ResponseEntity<List<PelicanCategory>> createAllCategories(@RequestBody List<PelicanEvent> events) {
+        if (events != null && !events.isEmpty()) {
+            events.forEach(service::addEvent);
+        }
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
 }

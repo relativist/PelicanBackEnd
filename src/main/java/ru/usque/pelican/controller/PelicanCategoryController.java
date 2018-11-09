@@ -44,6 +44,14 @@ public class PelicanCategoryController {
         }
     }
 
+    @PostMapping("dump")
+    public ResponseEntity<List<PelicanCategory>> createAllCategories(@RequestBody List<PelicanCategory> categories) {
+        if (categories != null && !categories.isEmpty()) {
+            categories.forEach(service::addCategory);
+        }
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
     @PutMapping()
     public ResponseEntity<PelicanCategory> updateArticle(@RequestBody PelicanCategory category) {
         service.updateCategory(category);
