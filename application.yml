@@ -2,7 +2,7 @@ spring:
   datasource:
     platform: postgres
     url: ${db-url:jdbc:postgresql://localhost:5432/auto3n}
-    username: ${db-user:auto3n}
+    username: ${db-user:***}
     password: ${db-pass:***}
     driverClassName: org.postgresql.Driver
     auto-commit: false
