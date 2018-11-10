@@ -12,12 +12,18 @@ import ru.usque.pelican.entities.PelicanEvent;
 import ru.usque.pelican.entities.PelicanUser;
 import ru.usque.pelican.services.IPelicanEventService;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
+import javax.ws.rs.QueryParam;
 import java.util.List;
 
 @Controller
 @RequestMapping("pelican/events")
 public class PelicanEventController {
     private final IPelicanEventService service;
+    @PersistenceContext
+    private EntityManager em;
 
     @Autowired
     public PelicanEventController(IPelicanEventService service) {
@@ -30,20 +36,22 @@ public class PelicanEventController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<PelicanEvent>> getEvents() {
-        return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
+    public ResponseEntity<List<PelicanEvent>> getEvents(@QueryParam("userId") Integer userId) {
+        if (userId == null) {
+            return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(service.findByUserId(userId), HttpStatus.OK);
     }
 
+    @Transactional
     @PostMapping()
-    public ResponseEntity<List<PelicanEvent>> createEvents(@RequestBody PelicanEvent event,
-                                                         UriComponentsBuilder builder) {
-        if(service.addEvent(event)){
-            HttpHeaders headers = new HttpHeaders();
-            headers.setLocation(builder.path("/events/{id}").buildAndExpand(event.getId()).toUri());
-            return new ResponseEntity<>(headers, HttpStatus.CREATED);
+    public ResponseEntity<PelicanEvent> createEvents(@RequestBody PelicanEvent event) {
+        if (event.getId() == 0) {
+            em.persist(event);
         }else {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
+            event = em.merge(event);
         }
+        return new ResponseEntity<>(event, HttpStatus.CREATED);
     }
 
     @PutMapping()
@@ -61,7 +69,13 @@ public class PelicanEventController {
     @PostMapping("dump")
     public ResponseEntity<List<PelicanCategory>> createAllCategories(@RequestBody List<PelicanEvent> events) {
         if (events != null && !events.isEmpty()) {
-            events.forEach(service::addEvent);
+            events.forEach(e-> {
+                if (e.getId() == 0) {
+                    em.persist(e);
+                }else {
+                    em.merge(e);
+                }
+            });
         }
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

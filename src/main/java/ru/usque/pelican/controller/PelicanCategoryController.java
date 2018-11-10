@@ -10,12 +10,18 @@ import org.springframework.web.util.UriComponentsBuilder;
 import ru.usque.pelican.entities.PelicanCategory;
 import ru.usque.pelican.services.IPelicanCategoryService;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
+import javax.ws.rs.QueryParam;
 import java.util.List;
 
 @Controller
 @RequestMapping("pelican/categories")
 public class PelicanCategoryController {
     private final IPelicanCategoryService service;
+    @PersistenceContext
+    private EntityManager em;
 
     @Autowired
     public PelicanCategoryController(IPelicanCategoryService service) {
@@ -28,26 +34,35 @@ public class PelicanCategoryController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<PelicanCategory>> getCategorys() {
-        return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
-    }
-
-    @PostMapping()
-    public ResponseEntity<List<PelicanCategory>> createCategories(@RequestBody PelicanCategory category,
-                                                         UriComponentsBuilder builder) {
-        if(service.addCategory(category)){
-            HttpHeaders headers = new HttpHeaders();
-            headers.setLocation(builder.path("/categories/{id}").buildAndExpand(category.getId()).toUri());
-            return new ResponseEntity<>(headers, HttpStatus.CREATED);
-        }else {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
+    public ResponseEntity<List<PelicanCategory>> getCategories(@QueryParam("userId") Integer userId) {
+        if (userId == null) {
+            return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
         }
+        return new ResponseEntity<>(service.findByUserId(userId), HttpStatus.OK);
     }
 
+    @Transactional
+    @PostMapping()
+    public ResponseEntity<PelicanCategory> createCategories(@RequestBody PelicanCategory category) {
+        if (category.getId() == 0) {
+            em.persist(category);
+        }else {
+            category = em.merge(category);
+        }
+        return new ResponseEntity<>(category, HttpStatus.CREATED);
+    }
+
+    @Transactional
     @PostMapping("dump")
     public ResponseEntity<List<PelicanCategory>> createAllCategories(@RequestBody List<PelicanCategory> categories) {
         if (categories != null && !categories.isEmpty()) {
-            categories.forEach(service::addCategory);
+            categories.forEach(e-> {
+                if (e.getId() == 0) {
+                    em.persist(e);
+                }else {
+                    em.merge(e);
+                }
+            });
         }
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

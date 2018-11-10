@@ -30,6 +30,11 @@ public class PelicanCategoryService implements IPelicanCategoryService {
     }
 
     @Override
+    public List<PelicanCategory> findByUserId(Integer id) {
+        return repository.findByUserId(id);
+    }
+
+    @Override
     public boolean addCategory(PelicanCategory category) {
         repository.save(category);
         return true;

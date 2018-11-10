@@ -1,5 +1,6 @@
 package ru.usque.pelican.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -11,12 +12,19 @@ import ru.usque.pelican.entities.PelicanCategory;
 import ru.usque.pelican.entities.PelicanUser;
 import ru.usque.pelican.services.IPelicanUserService;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
+import javax.ws.rs.QueryParam;
 import java.util.List;
 
+@Slf4j
 @Controller
 @RequestMapping("pelican/users")
 public class PelicanUserController {
     private final IPelicanUserService service;
+    @PersistenceContext
+    private EntityManager em;
 
     @Autowired
     public PelicanUserController(IPelicanUserService service) {
@@ -29,20 +37,24 @@ public class PelicanUserController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<PelicanUser>> getUsers() {
-        return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
+    public ResponseEntity<List<PelicanUser>> getUsers(@QueryParam("login") String login) {
+        if (login == null) {
+            return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(service.findByLogin(login), HttpStatus.OK);
     }
 
+    @Transactional
     @PostMapping()
-    public ResponseEntity<List<PelicanUser>> createUsers(@RequestBody PelicanUser user,
-                                                         UriComponentsBuilder builder) {
-        if(service.addUser(user)){
-            HttpHeaders headers = new HttpHeaders();
-            headers.setLocation(builder.path("/users/{id}").buildAndExpand(user.getId()).toUri());
-            return new ResponseEntity<>(headers, HttpStatus.CREATED);
+    public ResponseEntity<PelicanUser> createUsers(@RequestBody PelicanUser user) {
+        if (user.getId() <= 0) {
+            em.persist(user);
         }else {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
+            user = em.merge(user);
         }
+
+        log.info("{}",user);
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
     @PutMapping()
@@ -57,10 +69,18 @@ public class PelicanUserController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @Transactional
     @PostMapping("dump")
     public ResponseEntity<List<PelicanCategory>> createAllCategories(@RequestBody List<PelicanUser> users) {
         if (users != null && !users.isEmpty()) {
-            users.forEach(service::addUser);
+            users.forEach(e-> {
+                if (e.getId() <= 0) {
+                    em.persist(e);
+                }else {
+                    em.merge(e);
+                }
+
+            });
         }
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

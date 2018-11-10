@@ -30,6 +30,11 @@ public class PelicanUserService implements IPelicanUserService {
     }
 
     @Override
+    public List<PelicanUser> findByLogin(String login) {
+        return repository.findByLogin(login);
+    }
+
+    @Override
     public synchronized boolean addUser(PelicanUser user) {
         if(repository.findByEmail(user.getEmail()).isEmpty()){
             repository.save(user);

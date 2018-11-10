@@ -8,4 +8,5 @@ import java.util.List;
 public interface PelicanUserRepository extends CrudRepository<PelicanUser, Long>  {
     List<PelicanUser> findByEmail(String email);
     PelicanUser findById(Long id);
+    List<PelicanUser> findByLogin(String login);
 }
