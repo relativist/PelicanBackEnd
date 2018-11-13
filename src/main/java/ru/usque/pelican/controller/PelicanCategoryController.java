@@ -1,12 +1,11 @@
 package ru.usque.pelican.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
 import ru.usque.pelican.entities.PelicanCategory;
 import ru.usque.pelican.services.IPelicanCategoryService;
 
@@ -16,8 +15,9 @@ import javax.transaction.Transactional;
 import javax.ws.rs.QueryParam;
 import java.util.List;
 
-@Controller
-@RequestMapping("pelican/categories")
+@RestController
+@RequestMapping("categories")
+@Api(description = "saying hello", tags = "hello")
 public class PelicanCategoryController {
     private final IPelicanCategoryService service;
     @PersistenceContext
@@ -29,6 +29,11 @@ public class PelicanCategoryController {
     }
 
     @GetMapping("{id}")
+    @ApiOperation(
+            nickname = "index", // To avoid indexUsingGET in ApiClient
+            value = "Says hello to you",
+            notes = "This endpoint just tells you a greeting message.<br/>" +
+                    "See also: https://en.wikipedia.org/wiki/%22Hello,_World!%22_program")
     public ResponseEntity<PelicanCategory> getCategoryById(@PathVariable("id") Integer id) {
         return new ResponseEntity<>(service.findById(id), HttpStatus.OK);
     }

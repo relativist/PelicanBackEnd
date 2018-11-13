@@ -2,12 +2,9 @@ package ru.usque.pelican.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
 import ru.usque.pelican.entities.PelicanCategory;
 import ru.usque.pelican.entities.PelicanUser;
 import ru.usque.pelican.services.IPelicanUserService;
@@ -19,8 +16,8 @@ import javax.ws.rs.QueryParam;
 import java.util.List;
 
 @Slf4j
-@Controller
-@RequestMapping("pelican/users")
+@RestController
+@RequestMapping("users")
 public class PelicanUserController {
     private final IPelicanUserService service;
     @PersistenceContext

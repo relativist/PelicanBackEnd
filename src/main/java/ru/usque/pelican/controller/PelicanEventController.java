@@ -1,15 +1,11 @@
 package ru.usque.pelican.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
 import ru.usque.pelican.entities.PelicanCategory;
 import ru.usque.pelican.entities.PelicanEvent;
-import ru.usque.pelican.entities.PelicanUser;
 import ru.usque.pelican.services.IPelicanEventService;
 
 import javax.persistence.EntityManager;
@@ -18,8 +14,8 @@ import javax.transaction.Transactional;
 import javax.ws.rs.QueryParam;
 import java.util.List;
 
-@Controller
-@RequestMapping("pelican/events")
+@RestController
+@RequestMapping("events")
 public class PelicanEventController {
     private final IPelicanEventService service;
     @PersistenceContext
