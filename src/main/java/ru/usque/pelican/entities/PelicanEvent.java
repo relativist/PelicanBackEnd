@@ -16,14 +16,18 @@ import java.io.Serializable;
 @JsonTypeInfo(include = JsonTypeInfo.As.WRAPPER_OBJECT, use = JsonTypeInfo.Id.NONE)
 public class PelicanEvent implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private long id;
 
-    @Column(name = "user_id")
-    private Integer userId;
-    @Column(name = "category_id")
-    private Integer  categoryId;
+    @ManyToOne(cascade=CascadeType.REMOVE, fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    private PelicanUser user;
+
+    @ManyToOne(cascade=CascadeType.REMOVE, fetch = FetchType.EAGER)
+    @JoinColumn(name = "category_id")
+    private PelicanCategory category;
+
     @Column(name = "score")
     private Integer score;
     @Column(name = "date")

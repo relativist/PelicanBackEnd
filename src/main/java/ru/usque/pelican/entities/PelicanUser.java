@@ -16,11 +16,11 @@ import java.io.Serializable;
 @JsonTypeInfo(include = JsonTypeInfo.As.WRAPPER_OBJECT, use = JsonTypeInfo.Id.NONE)
 public class PelicanUser implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private long id;
 
-    @Column(name = "login")
+    @Column(name = "login",columnDefinition = "text")
     private String login;
 
     @Column(name = "email")

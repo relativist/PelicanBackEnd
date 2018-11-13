@@ -16,15 +16,17 @@ import java.io.Serializable;
 @JsonTypeInfo(include = JsonTypeInfo.As.WRAPPER_OBJECT, use = JsonTypeInfo.Id.NONE)
 public class PelicanCategory implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private long id;
 
-    @Column(name = "user_id")
-    private Integer userId;
+    @ManyToOne(cascade=CascadeType.REMOVE, fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    private PelicanUser user;
 
-    @Column(name = "category_parent_id")
-    private Integer categoryParentId;
+    @ManyToOne(cascade=CascadeType.REMOVE, fetch = FetchType.EAGER)
+    @JoinColumn(name = "category_parent_id")
+    private PelicanCategory parent;
 
     @Column(name = "name")
     private String name;
