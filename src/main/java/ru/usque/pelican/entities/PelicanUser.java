@@ -18,7 +18,7 @@ public class PelicanUser implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long id;
+    private Integer id;
 
     @Column(name = "login",columnDefinition = "text")
     private String login;

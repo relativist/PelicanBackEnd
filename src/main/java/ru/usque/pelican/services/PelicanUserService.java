@@ -26,7 +26,7 @@ public class PelicanUserService implements IPelicanUserService {
 
     @Override
     public PelicanUser findById(Integer id) {
-        return repository.findById((long)id);
+        return repository.findById(id);
     }
 
     @Override
@@ -51,5 +51,10 @@ public class PelicanUserService implements IPelicanUserService {
     @Override
     public void deleteUser(Integer id) {
         repository.delete((long) id);
+    }
+
+    @Override
+    public boolean auth(String login, String password) {
+        return repository.findByLogin(login).stream().filter(e-> e.getPassword().equals(password)).findAny().isPresent();
     }
 }

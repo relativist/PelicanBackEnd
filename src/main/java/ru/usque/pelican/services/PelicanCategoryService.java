@@ -26,7 +26,7 @@ public class PelicanCategoryService implements IPelicanCategoryService {
 
     @Override
     public PelicanCategory findById(Integer id) {
-        return repository.findById((long)id);
+        return repository.findById(id);
     }
 
     @Override

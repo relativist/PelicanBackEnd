@@ -2,6 +2,7 @@ package ru.usque.pelican.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,9 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import javax.ws.rs.QueryParam;
 import java.util.List;
+import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 @RequestMapping("categories")
 @Api(description = "saying hello", tags = "hello")
@@ -35,11 +38,25 @@ public class PelicanCategoryController {
             notes = "This endpoint just tells you a greeting message.<br/>" +
                     "See also: https://en.wikipedia.org/wiki/%22Hello,_World!%22_program")
     public ResponseEntity<PelicanCategory> getCategoryById(@PathVariable("id") Integer id) {
+        log.info("category -> get id / {}",id);
         return new ResponseEntity<>(service.findById(id), HttpStatus.OK);
     }
 
     @GetMapping()
-    public ResponseEntity<List<PelicanCategory>> getCategories(@QueryParam("userId") Integer userId) {
+    public ResponseEntity<List<PelicanCategory>> getCategories(@QueryParam("userId") Integer userId,
+                                                               @QueryParam("parentId") Integer parentId) {
+        log.info("category -> get getCategories / {} / {}", userId, parentId);
+        if (parentId != null) {
+            return new ResponseEntity<>(service.findAll().stream()
+                    .filter(e-> {
+                        if (e.getParent() != null) {
+                            return e.getParent().getId() == parentId;
+                        }
+                        return false;
+                    })
+                    .collect(Collectors.toList()), HttpStatus.OK);
+        }
+
         if (userId == null) {
             return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
         }
@@ -49,7 +66,12 @@ public class PelicanCategoryController {
     @Transactional
     @PostMapping()
     public ResponseEntity<PelicanCategory> createCategories(@RequestBody PelicanCategory category) {
-        if (category.getId() == 0) {
+        log.info("category -> post / {} ", category);
+        if (category.getId() == null || category.getId() == 0) {
+            if (category.getParent() != null&& category.getParent().getId() == 0) {
+                category.setParent(null);
+            }
+            category.setId(null);
             em.persist(category);
         }else {
             category = em.merge(category);
@@ -72,16 +94,26 @@ public class PelicanCategoryController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @Transactional
     @PutMapping()
     public ResponseEntity<PelicanCategory> updateArticle(@RequestBody PelicanCategory category) {
+        log.info("category -> put / {} ", category);
         service.updateCategory(category);
         return new ResponseEntity<>(category, HttpStatus.OK);
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<Void> deleteArticle(@PathVariable("id") Integer id) {
+        log.info("category -> delete / {} ", id);
         service.deleteCategory(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @RequestMapping(
+            value = "/**",
+            method = RequestMethod.OPTIONS
+    )
+    public ResponseEntity handle() {
+        return new ResponseEntity(HttpStatus.OK);
+    }
 }

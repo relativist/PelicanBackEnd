@@ -1,0 +1,134 @@
+------------------------[USER]-----------------------------
+GET     localhost:8080/pelican/users/1
+GET     localhost:8080/pelican/users/auth?login=Artem&password=123
+POST    localhost:8080/pelican/users
+{
+    "login": "vata",
+    "email": "1@2.ru",
+    "password": "134",
+    "name": "Subad"
+}
+
+PUT     localhost:8080/pelican/users
+{
+    "id": 1,
+    "login": "Artem",
+    "email": "sitnikov@gmail.com",
+    "password": "123",
+    "name": "Sitnikov Artem"
+}
+
+DELETE localhost:8080/pelican/users/2
+
+
+------------------------[CATEGORY]-----------------------------
+GET     localhost:8080/pelican/categories/1
+GET     localhost:8080/pelican/categories
+GET     localhost:8080/pelican/categories?userId=1
+GET     localhost:8080/pelican/categories?parentId=1
+POST    localhost:8080/pelican/categories
+{
+    "user": {
+        "id": 1
+
+    },
+    "parent": {
+        "id": 1
+    },
+    "name": "Another name",
+    "simple": true,
+    "score": 12,
+    "disposable": false,
+    "disposableCapacity": 110,
+    "disposableDone": 11,
+    "deprecated": false,
+    "header": true
+}
+PUT localhost:8080/pelican/categories
+{
+    "id": 4,
+    "user": {
+        "id": 1
+
+    },
+    "parent": {
+        "id": 1
+    },
+    "name": "Another name",
+    "simple": true,
+    "score": 12,
+    "disposable": false,
+    "disposableCapacity": 110,
+    "disposableDone": 11,
+    "deprecated": false,
+    "header": true
+}
+
+------------------------[EVENT]-----------------------------
+GET     localhost:8080/pelican/events
+GET     localhost:8080/pelican/events/1
+GET     localhost:8080/pelican/events?categoryId=1&userId=1
+POST    localhost:8080/pelican/events
+{
+    "user": {
+        "id": 1,
+        "login": "Artem",
+        "email": "sitnikov@gmail.com",
+        "password": "123",
+        "name": "Sitnikov Artem"
+    },
+    "category": {
+        "id": 1,
+        "user": {
+            "id": 1,
+            "login": "Artem",
+            "email": "sitnikov@gmail.com",
+            "password": "123",
+            "name": "Sitnikov Artem"
+        },
+        "parent": null,
+        "name": "1",
+        "simple": null,
+        "score": 1,
+        "disposable": null,
+        "disposableCapacity": 11,
+        "disposableDone": 1,
+        "deprecated": null,
+        "header": null
+    },
+    "score": 1,
+    "date": "1"
+}
+
+PUT localhost:8080/pelican/events
+{
+    "id": 2,
+    "user": {
+        "id": 1,
+        "login": "Artem",
+        "email": "sitnikov@gmail.com",
+        "password": "123",
+        "name": "Sitnikov Artem"
+    },
+    "category": {
+        "id": 3,
+        "user": {
+            "id": 1,
+            "login": "Artem",
+            "email": "sitnikov@gmail.com",
+            "password": "123",
+            "name": "Sitnikov Artem"
+        },
+        "parent": null,
+        "name": "1",
+        "simple": null,
+        "score": 1,
+        "disposable": null,
+        "disposableCapacity": 11,
+        "disposableDone": 1,
+        "deprecated": null,
+        "header": null
+    },
+    "score": 1,
+    "date": "1"
+}

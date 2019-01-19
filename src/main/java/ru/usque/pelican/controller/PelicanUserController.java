@@ -30,11 +30,23 @@ public class PelicanUserController {
 
     @GetMapping("{id}")
     public ResponseEntity<PelicanUser> getUserById(@PathVariable("id") Integer id) {
+        log.info("users -> get / id {} ", id);
         return new ResponseEntity<>(service.findById(id), HttpStatus.OK);
+    }
+
+    @GetMapping("auth")
+    public ResponseEntity<PelicanUser> auth(@QueryParam("login") String login, @QueryParam("password") String password) {
+        log.info("users -> auth / login {} / password {} ", login, password);
+        if (service.auth(login, password)) {
+            return new ResponseEntity<>(service.findByLogin(login).get(0), HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+        }
     }
 
     @GetMapping()
     public ResponseEntity<List<PelicanUser>> getUsers(@QueryParam("login") String login) {
+        log.info("users -> get / login {} ", login);
         if (login == null) {
             return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
         }
@@ -44,6 +56,7 @@ public class PelicanUserController {
     @Transactional
     @PostMapping()
     public ResponseEntity<PelicanUser> createUsers(@RequestBody PelicanUser user) {
+        log.info("users -> post / user {} ", user);
         if (user.getId() <= 0) {
             em.persist(user);
         }else {
@@ -56,12 +69,14 @@ public class PelicanUserController {
 
     @PutMapping()
     public ResponseEntity<PelicanUser> updateArticle(@RequestBody PelicanUser user) {
+        log.info("users -> put / user {} ", user);
         service.updateUser(user);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<Void> deleteArticle(@PathVariable("id") Integer id) {
+        log.info("users -> delete / id {} ", id);
         service.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -82,4 +97,11 @@ public class PelicanUserController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @RequestMapping(
+            value = "/**",
+            method = RequestMethod.OPTIONS
+    )
+    public ResponseEntity handle() {
+        return new ResponseEntity(HttpStatus.OK);
+    }
 }

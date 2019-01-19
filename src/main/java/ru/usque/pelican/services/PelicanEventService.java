@@ -31,7 +31,7 @@ public class PelicanEventService implements IPelicanEventService {
 
     @Override
     public PelicanEvent findById(Integer id) {
-        return repository.findById((long)id);
+        return repository.findById(id);
     }
 
     @Override
