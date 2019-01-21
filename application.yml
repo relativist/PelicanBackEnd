@@ -1,12 +1,12 @@
 spring:
-  jpa:
-    hibernate:
-      ddl-auto: update
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
   datasource:
     platform: postgres
-    url: ${db-url:jdbc:postgresql://localhost:5432/auto3n}
-    username: ${db-user:auto3n}
-    password: ${db-pass:auto3n2pass}
+    url: ${db-url:jdbc:postgresql://192.168.1.33:5432/rest}
+    username: ${db-user:rest}
+    password: ${db-pass:rest}
     driverClassName: org.postgresql.Driver
     auto-commit: false
 liquibase:
@@ -14,3 +14,4 @@ liquibase:
   enabled: true
 server:
   contextPath: /pelican
+  port: 8088

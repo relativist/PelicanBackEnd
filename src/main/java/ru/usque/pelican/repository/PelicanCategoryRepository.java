@@ -5,7 +5,7 @@ import ru.usque.pelican.entities.PelicanCategory;
 
 import java.util.List;
 
-public interface PelicanCategoryRepository extends CrudRepository<PelicanCategory, Long>  {
+public interface PelicanCategoryRepository extends CrudRepository<PelicanCategory, Integer>  {
     PelicanCategory findById(Integer id);
     List<PelicanCategory> findByUserId(Integer id);
 }

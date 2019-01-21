@@ -2,9 +2,11 @@ package ru.usque.pelican.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.usque.pelican.dto.PelicanError;
 import ru.usque.pelican.entities.PelicanCategory;
 import ru.usque.pelican.entities.PelicanUser;
 import ru.usque.pelican.services.IPelicanUserService;
@@ -13,6 +15,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import javax.ws.rs.QueryParam;
+import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
@@ -40,7 +43,7 @@ public class PelicanUserController {
         if (service.auth(login, password)) {
             return new ResponseEntity<>(service.findByLogin(login).get(0), HttpStatus.OK);
         }else {
-            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(new HttpHeaders(), HttpStatus.FORBIDDEN);
         }
     }
 

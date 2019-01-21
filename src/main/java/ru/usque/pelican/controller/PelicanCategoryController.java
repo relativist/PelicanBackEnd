@@ -82,6 +82,7 @@ public class PelicanCategoryController {
     @Transactional
     @PostMapping("dump")
     public ResponseEntity<List<PelicanCategory>> createAllCategories(@RequestBody List<PelicanCategory> categories) {
+        //noinspection Duplicates
         if (categories != null && !categories.isEmpty()) {
             categories.forEach(e-> {
                 if (e.getId() == 0) {

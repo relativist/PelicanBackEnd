@@ -47,7 +47,7 @@ public class PelicanCategoryService implements IPelicanCategoryService {
 
     @Override
     public void deleteCategory(Integer id) {
-        repository.delete((long)id);
+        repository.delete(id);
     }
 
 }

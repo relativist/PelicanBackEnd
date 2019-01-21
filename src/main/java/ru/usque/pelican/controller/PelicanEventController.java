@@ -76,6 +76,7 @@ public class PelicanEventController {
 
     @PostMapping("dump")
     public ResponseEntity<List<PelicanCategory>> createAllCategories(@RequestBody List<PelicanEvent> events) {
+        //noinspection Duplicates
         if (events != null && !events.isEmpty()) {
             events.forEach(e-> {
                 if (e.getId() == 0) {
