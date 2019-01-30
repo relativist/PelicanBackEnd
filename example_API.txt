@@ -1,3 +1,6 @@
+SELECT setval('public.pelican_user_id_seq', (SELECT max(id) + 1 FROM public.pelican_user));
+SELECT setval('public.pelican_category_id_seq', (SELECT max(id) + 1 FROM public.pelican_category));
+
 ------------------------[USER]-----------------------------
 GET     localhost:8080/pelican/users/1
 GET     localhost:8080/pelican/users/auth?login=Artem&password=123
@@ -132,3 +135,63 @@ PUT localhost:8080/pelican/events
     "score": 1,
     "date": "1"
 }
+------------------------[BAD CATEGORIES]-----------------------------
+GET     localhost:8088/pelican/bad-categories?userId=1
+POST    localhost:8088/pelican/bad-categories
+ {
+        "user": {
+            "id": 1,
+            "login": "rest",
+            "email": "admin@mail.ru",
+            "password": "rest",
+            "name": "Sitnikov Artem"
+        },
+        "score": 30,
+        "name": "Фильм"
+    }
+
+PUT    localhost:8088/pelican/bad-categories
+ {
+        "user": {
+            "id": 1,
+            "login": "rest",
+            "email": "admin@mail.ru",
+            "password": "rest",
+            "name": "Sitnikov Artem"
+        },
+        "score": 30,
+        "name": "Фильм"
+    }
+DELETE      localhost:8088/pelican/bad-categories/3
+------------------------[SCORE]-----------------------------
+GET     localhost:8088/pelican/score?userId=1
+GET     localhost:8088/pelican/score/operate?userId=1&value=20
+
+------------------------[BAD EVENT]-----------------------------
+GET     localhost:8088/pelican/bad-events
+POST    localhost:8088/pelican/bad-events
+    {
+        "user": {
+            "id": 1,
+            "login": "rest",
+            "email": "admin@mail.ru",
+            "password": "rest",
+            "name": "Sitnikov Artem"
+        },
+        "category": {
+            "id": 1,
+            "user": {
+                "id": 1,
+                "login": "rest",
+                "email": "admin@mail.ru",
+                "password": "rest",
+                "name": "Sitnikov Artem"
+            },
+            "score": 30,
+            "name": "CS GO"
+        },
+        "date": ""
+    }
+------------------------[Plan]-----------------------------
+GET     localhost:8088/pelican/plan
+GET     localhost:8088/pelican/plan?userId=1&isGrand=false

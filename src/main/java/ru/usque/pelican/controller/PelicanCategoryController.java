@@ -8,13 +8,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.usque.pelican.entities.PelicanCategory;
-import ru.usque.pelican.services.IPelicanCategoryService;
+import ru.usque.pelican.services.interfaces.IPelicanCategoryService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import javax.ws.rs.QueryParam;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -50,7 +51,7 @@ public class PelicanCategoryController {
             return new ResponseEntity<>(service.findAll().stream()
                     .filter(e-> {
                         if (e.getParent() != null) {
-                            return e.getParent().getId() == parentId;
+                            return Objects.equals(e.getParent().getId(), parentId);
                         }
                         return false;
                     })

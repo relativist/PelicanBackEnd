@@ -14,9 +14,9 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Data
 @Entity
-@Table(name = "pelican_event")
+@Table(name = "pelican_bad_event")
 @JsonTypeInfo(include = JsonTypeInfo.As.WRAPPER_OBJECT, use = JsonTypeInfo.Id.NONE)
-public class PelicanEvent implements Serializable {
+public class PelicanBadEvent implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -27,11 +27,9 @@ public class PelicanEvent implements Serializable {
     private PelicanUser user;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "category_id")
-    private PelicanCategory category;
+    @JoinColumn(name = "bad_category_id")
+    private PelicanBadCategory category;
 
-    @Column(name = "score")
-    private Integer score;
     @Column(name = "date")
     private String date;
 }

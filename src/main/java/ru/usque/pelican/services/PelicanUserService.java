@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.usque.pelican.entities.PelicanUser;
 import ru.usque.pelican.repository.PelicanUserRepository;
+import ru.usque.pelican.services.interfaces.IPelicanUserService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,11 +51,11 @@ public class PelicanUserService implements IPelicanUserService {
 
     @Override
     public void deleteUser(Integer id) {
-        repository.delete((long) id);
+        repository.delete(id);
     }
 
     @Override
     public boolean auth(String login, String password) {
-        return repository.findByLogin(login).stream().filter(e-> e.getPassword().equals(password)).findAny().isPresent();
+        return repository.findByLogin(login).stream().anyMatch(e-> e.getPassword().equals(password));
     }
 }

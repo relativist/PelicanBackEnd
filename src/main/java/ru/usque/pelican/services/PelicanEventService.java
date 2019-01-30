@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.usque.pelican.entities.PelicanEvent;
 import ru.usque.pelican.repository.PelicanEventRepository;
+import ru.usque.pelican.services.interfaces.IPelicanEventService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +48,7 @@ public class PelicanEventService implements IPelicanEventService {
 
     @Override
     public void deleteEvent(Integer id) {
-        repository.delete((long) id);
+        repository.delete(id);
     }
 
 

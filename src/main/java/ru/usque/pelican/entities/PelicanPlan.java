@@ -14,9 +14,9 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Data
 @Entity
-@Table(name = "pelican_event")
+@Table(name = "pelican_plan")
 @JsonTypeInfo(include = JsonTypeInfo.As.WRAPPER_OBJECT, use = JsonTypeInfo.Id.NONE)
-public class PelicanEvent implements Serializable {
+public class PelicanPlan implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -26,12 +26,32 @@ public class PelicanEvent implements Serializable {
     @JoinColumn(name = "user_id")
     private PelicanUser user;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "category_id")
-    private PelicanCategory category;
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "date")
+    private String date;
+
+    @Column(name = "is_grand")
+    private Boolean isGrand;
 
     @Column(name = "score")
     private Integer score;
-    @Column(name = "date")
-    private String date;
+
+    @Column(name = "is_finished")
+    private Boolean isFinished;
+
+    public Boolean getIsFinished() {
+        if (isFinished != null) {
+            return isFinished;
+        }
+        return false;
+    }
+
+    public Boolean getIsGrand() {
+        if (isGrand == null) {
+            return false;
+        }
+        return isGrand;
+    }
 }
