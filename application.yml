@@ -4,7 +4,7 @@ spring:
       ddl-auto: update
   datasource:
     platform: postgres
-    url: ${db-url:jdbc:postgresql://localhost:5432/auto3n}
+    url: ${db-url:jdbc:postgresql://localhost:5432/auto3n?currentSchema=pelican}
     username: ${db-user:auto3n}
     password: ${db-pass:auto3n2pass}
     driverClassName: org.postgresql.Driver
