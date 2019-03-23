@@ -5,8 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.usque.pelican.entities.PelicanEvent;
-import ru.usque.pelican.services.interfaces.IPelicanEventService;
+import ru.usque.pelican.entities.PelicanBadEvent;
+import ru.usque.pelican.services.interfaces.IPelicanBadEventService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -17,30 +17,30 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
-@RequestMapping("events")
-public class PelicanEventController {
-    private final IPelicanEventService service;
+@RequestMapping("bad-events")
+public class PelicanBadEventController {
+    private final IPelicanBadEventService service;
     @PersistenceContext
     private EntityManager em;
 
     @Autowired
-    public PelicanEventController(IPelicanEventService service) {
+    public PelicanBadEventController(IPelicanBadEventService service) {
         this.service = service;
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<PelicanEvent> getEventById(@PathVariable("id") Integer id) {
-        log.info("events -> get / id {} ", id);
+    public ResponseEntity<PelicanBadEvent> getBadEventById(@PathVariable("id") Integer id) {
+        log.info("BadEvent -> get / id {} ", id);
         return new ResponseEntity<>(service.findById(id), HttpStatus.OK);
     }
 
     @GetMapping()
-    public ResponseEntity<List<PelicanEvent>> getEvents(
+    public ResponseEntity<List<PelicanBadEvent>> getBadEvents(
             @QueryParam("userId") Integer userId,
-            @QueryParam("categoryId") Integer categoryId
+            @QueryParam("badCategoryId") Integer categoryId
     ) {
-        log.info("events -> get getEvents / userId {} / categoryId {} ", userId,categoryId);
-        List<PelicanEvent> all = service.findAll().stream()
+        log.info("BadEvent -> get getEvents / userId {} / categoryId {} ", userId,categoryId);
+        List<PelicanBadEvent> all = service.findAll().stream()
                 .filter(e-> userId == null || e.getUser().getId().equals(userId))
                 .filter(e-> categoryId == null || e.getCategory().getId().equals(categoryId))
                 .collect(Collectors.toList());
@@ -49,30 +49,25 @@ public class PelicanEventController {
 
     @Transactional
     @PostMapping()
-    public ResponseEntity<PelicanEvent> createEvents(@RequestBody PelicanEvent event) {
-        log.info("events -> post / event {} ", event);
-        if (event.getId() == null || event.getId() == 0) {
-            em.persist(event);
-        }else {
-            event = em.merge(event);
-        }
+    public ResponseEntity<PelicanBadEvent> createBadEvents(@RequestBody PelicanBadEvent event) {
+        log.info("BadEvent -> post / event {} ", event);
+        event = service.addBadEvent(event);
         return new ResponseEntity<>(event, HttpStatus.CREATED);
     }
 
     @PutMapping()
-    public ResponseEntity<PelicanEvent> updateArticle(@RequestBody PelicanEvent event) {
-        log.info("events -> put / event {} ", event);
-        service.updateEvent(event);
+    public ResponseEntity<PelicanBadEvent> update(@RequestBody PelicanBadEvent event) {
+        log.info("BadEvent -> put / event {} ", event);
+        event = service.updateBadEvent(event);
         return new ResponseEntity<>(event, HttpStatus.OK);
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Void> deleteArticle(@PathVariable("id") Integer id) {
-        log.info("events -> get / id {} ", id);
-        service.deleteEvent(id);
+    public ResponseEntity<Void> delete(@PathVariable("id") Integer id) {
+        log.info("BadEvent -> get / id {} ", id);
+        service.deleteBadEvent(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
 
     @RequestMapping(
             value = "/**",

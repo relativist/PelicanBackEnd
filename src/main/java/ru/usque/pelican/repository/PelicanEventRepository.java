@@ -5,7 +5,7 @@ import ru.usque.pelican.entities.PelicanEvent;
 
 import java.util.List;
 
-public interface PelicanEventRepository extends CrudRepository<PelicanEvent, Long>  {
+public interface PelicanEventRepository extends CrudRepository<PelicanEvent, Integer>  {
     PelicanEvent findById(Integer id);
     List<PelicanEvent> findByUserId(Integer id);
 }

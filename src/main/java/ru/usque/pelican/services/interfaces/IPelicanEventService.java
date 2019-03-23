@@ -1,4 +1,4 @@
-package ru.usque.pelican.services;
+package ru.usque.pelican.services.interfaces;
 
 import ru.usque.pelican.entities.PelicanEvent;
 

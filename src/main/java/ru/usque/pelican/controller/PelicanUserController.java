@@ -6,16 +6,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.usque.pelican.dto.PelicanError;
 import ru.usque.pelican.entities.PelicanCategory;
 import ru.usque.pelican.entities.PelicanUser;
-import ru.usque.pelican.services.IPelicanUserService;
+import ru.usque.pelican.services.interfaces.IPelicanUserService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import javax.ws.rs.QueryParam;
-import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
@@ -60,7 +58,7 @@ public class PelicanUserController {
     @PostMapping()
     public ResponseEntity<PelicanUser> createUsers(@RequestBody PelicanUser user) {
         log.info("users -> post / user {} ", user);
-        if (user.getId() <= 0) {
+        if (user.getId() == null || user.getId() <= 0) {
             em.persist(user);
         }else {
             user = em.merge(user);
