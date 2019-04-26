@@ -5,9 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.usque.pelican.controller.util.ControllerUtils;
 import ru.usque.pelican.entities.PelicanPlan;
 import ru.usque.pelican.services.interfaces.IPelicanPlansService;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import javax.ws.rs.QueryParam;
 import java.util.List;
@@ -40,24 +42,25 @@ public class PelicanPlanController {
 
     @Transactional
     @PostMapping()
-    public ResponseEntity<PelicanPlan> createUsers(@RequestBody PelicanPlan plan) {
+    public ResponseEntity<PelicanPlan> createUsers(@RequestBody PelicanPlan plan, HttpServletRequest request) {
         log.info("users -> post / plan {} ", plan);
-        plan = service.addPlan(plan);
-        return new ResponseEntity<>(plan, HttpStatus.CREATED);
+        return ControllerUtils.callResponse(request, plan.getUser().getId(), ()-> service.addPlan(plan));
     }
 
     @PutMapping()
-    public ResponseEntity<PelicanPlan> updateArticle(@RequestBody PelicanPlan plan) {
+    public ResponseEntity<PelicanPlan> updateArticle(@RequestBody PelicanPlan plan, HttpServletRequest request) {
         log.info("plan -> put / plan {} ", plan);
-        plan = service.updatePlan(plan);
-        return new ResponseEntity<>(plan, HttpStatus.OK);
+        return ControllerUtils.callResponse(request, plan.getUser().getId(), () -> service.updatePlan(plan));
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Void> deleteArticle(@PathVariable("id") Integer id) {
+    public ResponseEntity<Void> deleteArticle(@PathVariable("id") Integer id, HttpServletRequest request) {
         log.info("plan -> delete / id {} ", id);
-        service.deletePlan(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        PelicanPlan plan = service.findById(id);
+        return ControllerUtils.callResponse(request, plan.getUser().getId(), () -> {
+            service.deletePlan(id);
+            return null;
+        });
     }
 
     @RequestMapping(

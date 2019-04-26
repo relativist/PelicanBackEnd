@@ -5,9 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.usque.pelican.controller.util.ControllerUtils;
 import ru.usque.pelican.entities.PelicanScore;
 import ru.usque.pelican.services.interfaces.IPelicanScoreService;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.QueryParam;
 import java.util.List;
 
@@ -49,10 +51,11 @@ public class PelicanScoreController {
     }
 
     @GetMapping("operate")
-    public ResponseEntity<PelicanScore> operate(@QueryParam("value") Integer value,@QueryParam("userId") Integer userId) {
+    public ResponseEntity<PelicanScore> operate(@QueryParam("value") Integer value,
+                                                @QueryParam("userId") Integer userId,
+                                                HttpServletRequest request) {
         log.info("score -> put / value {} / {}", value, userId);
-        PelicanScore score = service.operateScore(value, userId);
-        return new ResponseEntity<>(score, HttpStatus.OK);
+        return ControllerUtils.callResponse(request, userId, () -> service.operateScore(value, userId));
     }
 
     @RequestMapping(

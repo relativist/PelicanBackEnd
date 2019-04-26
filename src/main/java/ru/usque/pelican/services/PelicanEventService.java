@@ -42,8 +42,8 @@ public class PelicanEventService implements IPelicanEventService {
     }
 
     @Override
-    public void updateEvent(PelicanEvent event) {
-        repository.save(event);
+    public PelicanEvent updateEvent(PelicanEvent event) {
+        return repository.save(event);
     }
 
     @Override

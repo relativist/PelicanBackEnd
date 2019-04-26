@@ -9,6 +9,6 @@ public interface IPelicanCategoryService {
     PelicanCategory findById(Integer id);
     List<PelicanCategory> findByUserId(Integer id);
     boolean addCategory(PelicanCategory category);
-    void updateCategory(PelicanCategory user);
+    PelicanCategory updateCategory(PelicanCategory user);
     void deleteCategory(Integer id);
 }

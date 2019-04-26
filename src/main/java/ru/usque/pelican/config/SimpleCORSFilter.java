@@ -1,4 +1,4 @@
-package ru.usque.pelican.controller;
+package ru.usque.pelican.config;
 
 import org.springframework.stereotype.Component;
 

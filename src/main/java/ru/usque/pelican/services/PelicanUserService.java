@@ -45,8 +45,8 @@ public class PelicanUserService implements IPelicanUserService {
     }
 
     @Override
-    public void updateUser(PelicanUser user) {
-        repository.save(user);
+    public PelicanUser updateUser(PelicanUser user) {
+        return repository.save(user);
     }
 
     @Override

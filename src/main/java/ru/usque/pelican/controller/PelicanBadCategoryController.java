@@ -7,13 +7,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.usque.pelican.config.PelicanUserPrincipal;
+import ru.usque.pelican.controller.util.ControllerUtils;
+import ru.usque.pelican.dto.PelicanError;
 import ru.usque.pelican.entities.PelicanBadCategory;
 import ru.usque.pelican.services.interfaces.IPelicanBadCategoryService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import javax.ws.rs.QueryParam;
+import java.security.Principal;
 import java.util.List;
 
 @Slf4j
@@ -32,7 +37,7 @@ public class PelicanBadCategoryController {
 
     @GetMapping("{id}")
     @ApiOperation(
-            nickname = "index", // To avoid indexUsingGET in ApiClient
+            nickname = "index",
             value = "Says hello to you",
             notes = "This endpoint just tells you a greeting message.<br/>" +
                     "See also: https://en.wikipedia.org/wiki/%22Hello,_World!%22_program")
@@ -52,28 +57,29 @@ public class PelicanBadCategoryController {
 
     @Transactional
     @PostMapping()
-    public ResponseEntity<PelicanBadCategory> createCategories(@RequestBody PelicanBadCategory category) {
+    public ResponseEntity<PelicanBadCategory> createCategories(@RequestBody PelicanBadCategory category,
+    HttpServletRequest request) {
         log.info("category -> post / {} ", category);
-        category = service.addBadCategory(category);
-        return new ResponseEntity<>(category, HttpStatus.CREATED);
+        return ControllerUtils.callResponse(request, category.getUser().getId(), () -> service.addBadCategory(category));
     }
 
     @Transactional
     @PutMapping()
-    public ResponseEntity<PelicanBadCategory> updateArticle(@RequestBody PelicanBadCategory category) {
+    public ResponseEntity<PelicanBadCategory> updateArticle(@RequestBody PelicanBadCategory category,HttpServletRequest request) {
         log.info("category -> put / {} ", category);
-        category = service.updateBadCategory(category);
-        return new ResponseEntity<>(category, HttpStatus.OK);
+        return ControllerUtils.callResponse(request, category.getUser().getId(), () -> service.updateBadCategory(category));
     }
 
     @Transactional
     @DeleteMapping("{id}")
-    public ResponseEntity<Void> deleteArticle(@PathVariable("id") Integer id) {
+    public ResponseEntity<Void> deleteArticle(@PathVariable("id") Integer id,HttpServletRequest request) {
         log.info("category -> delete / {} ", id);
         PelicanBadCategory category = service.findById(id);
-        em.remove(category);
-        service.deleteBadCategory(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ControllerUtils.callResponse(request, category.getUser().getId(), () -> {
+            em.remove(category);
+            service.deleteBadCategory(id);
+            return null;
+        });
     }
 
     @RequestMapping(

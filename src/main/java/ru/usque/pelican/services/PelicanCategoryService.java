@@ -61,13 +61,13 @@ public class PelicanCategoryService implements IPelicanCategoryService {
   }
 
   @Override
-  public void updateCategory(PelicanCategory category) {
+  public PelicanCategory updateCategory(PelicanCategory category) {
     PelicanUser user = category.getUser();
 
     //нельзя установить парента саму себя
     if (category.getParent() != null) {
       if (category.getParent().getId().equals(category.getId())) {
-        return;
+        return category;
       }
     }
 
@@ -80,10 +80,10 @@ public class PelicanCategoryService implements IPelicanCategoryService {
         }
         return false;
       })) {
-        return;
+        return category;
       }
     }
-    repository.save(category);
+    return repository.save(category);
   }
 
   @Override

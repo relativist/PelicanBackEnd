@@ -5,11 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.usque.pelican.controller.util.ControllerUtils;
 import ru.usque.pelican.entities.PelicanBadEvent;
 import ru.usque.pelican.services.interfaces.IPelicanBadEventService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import javax.ws.rs.QueryParam;
 import java.util.List;
@@ -49,24 +51,25 @@ public class PelicanBadEventController {
 
     @Transactional
     @PostMapping()
-    public ResponseEntity<PelicanBadEvent> createBadEvents(@RequestBody PelicanBadEvent event) {
+    public ResponseEntity<PelicanBadEvent> createBadEvents(@RequestBody PelicanBadEvent event, HttpServletRequest request) {
         log.info("BadEvent -> post / event {} ", event);
-        event = service.addBadEvent(event);
-        return new ResponseEntity<>(event, HttpStatus.CREATED);
+        return ControllerUtils.callResponse(request, event.getUser().getId(), () -> service.addBadEvent(event));
     }
 
     @PutMapping()
-    public ResponseEntity<PelicanBadEvent> update(@RequestBody PelicanBadEvent event) {
+    public ResponseEntity<PelicanBadEvent> update(@RequestBody PelicanBadEvent event, HttpServletRequest request) {
         log.info("BadEvent -> put / event {} ", event);
-        event = service.updateBadEvent(event);
-        return new ResponseEntity<>(event, HttpStatus.OK);
+        return ControllerUtils.callResponse(request, event.getUser().getId(), () -> service.updateBadEvent(event));
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") Integer id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") Integer id, HttpServletRequest request) {
         log.info("BadEvent -> get / id {} ", id);
-        service.deleteBadEvent(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        PelicanBadEvent badEvent = service.findById(id);
+        return ControllerUtils.callResponse(request, badEvent.getUser().getId(), () -> {
+            service.deleteBadEvent(id);
+            return null;
+        });
     }
 
     @RequestMapping(

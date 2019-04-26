@@ -5,11 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.usque.pelican.controller.util.ControllerUtils;
 import ru.usque.pelican.entities.PelicanEvent;
 import ru.usque.pelican.services.interfaces.IPelicanEventService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import javax.ws.rs.QueryParam;
 import java.util.List;
@@ -49,28 +51,33 @@ public class PelicanEventController {
 
     @Transactional
     @PostMapping()
-    public ResponseEntity<PelicanEvent> createEvents(@RequestBody PelicanEvent event) {
+    public ResponseEntity<PelicanEvent> createEvents(@RequestBody PelicanEvent event, HttpServletRequest request) {
         log.info("events -> post / event {} ", event);
-        if (event.getId() == null || event.getId() == 0) {
-            em.persist(event);
-        }else {
-            event = em.merge(event);
-        }
-        return new ResponseEntity<>(event, HttpStatus.CREATED);
+        return ControllerUtils.callResponse(request, event.getUser().getId(), () -> {
+            PelicanEvent ev = event;
+            if (ev.getId() == null || event.getId() == 0) {
+                em.persist(event);
+            }else {
+                ev = em.merge(event);
+            }
+            return ev;
+        });
     }
 
     @PutMapping()
-    public ResponseEntity<PelicanEvent> updateArticle(@RequestBody PelicanEvent event) {
+    public ResponseEntity<PelicanEvent> updateArticle(@RequestBody PelicanEvent event, HttpServletRequest request) {
         log.info("events -> put / event {} ", event);
-        service.updateEvent(event);
-        return new ResponseEntity<>(event, HttpStatus.OK);
+        return ControllerUtils.callResponse(request, event.getUser().getId(), () -> service.updateEvent(event));
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Void> deleteArticle(@PathVariable("id") Integer id) {
+    public ResponseEntity<Void> deleteArticle(@PathVariable("id") Integer id, HttpServletRequest request) {
         log.info("events -> get / id {} ", id);
-        service.deleteEvent(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        PelicanEvent event = service.findById(id);
+        return ControllerUtils.callResponse(request, event.getUser().getId(), () -> {
+            service.deleteEvent(id);
+            return null;
+        });
     }
 
 

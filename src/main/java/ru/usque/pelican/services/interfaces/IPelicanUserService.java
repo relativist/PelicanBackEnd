@@ -13,7 +13,7 @@ public interface IPelicanUserService {
 
   boolean addUser(PelicanUser user);
 
-  void updateUser(PelicanUser user);
+  PelicanUser updateUser(PelicanUser user);
 
   void deleteUser(Integer user);
 
